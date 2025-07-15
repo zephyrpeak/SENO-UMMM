@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Senoşum 💖</title>
+  <style>
+    body {
+      background-color: #fcd6e2;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      text-align: center;
+      padding-top: 100px;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #d63384;
+    }
+
+    button {
+      font-size: 1.5rem;
+      padding: 10px 30px;
+      margin: 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 1;
+    }
+
+    #yesBtn {
+      background-color: #ff69b4;
+      color: white;
+    }
+
+    #noBtn {
+      background-color: #ffc0cb;
+      color: white;
+    }
+
+    #message {
+      font-size: 1.2rem;
+      color: #6c2c5e;
+      margin-top: 30px;
+      height: 50px;
+    }
+
+    #fullYes {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      font-size: 3rem !important;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #ff69b4;
+      color: white;
+      border-radius: 0;
+      z-index: 999;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <h1>Senoşum, barışsak mı artık? 💔</h1>
+
+  <button id="yesBtn">Evet</button>
+  <button id="noBtn">Hayır</button>
+
+  <div id="message"></div>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <audio id="bg-audio" src="felaket.mp3" preload="auto"></audio>
+
+  <script>
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const message = document.getElementById("message");
+    const canvas = document.getElementById("confetti-canvas");
+    const ctx = canvas.getContext("2d");
+    const audio = document.getElementById("bg-audio");
+
+    let noClickCount = 0;
+
+    const noMessages = [
+      "Emin misin? 😢",
+      "Ama daha Hatay dürüm gömcektik...",
+      "Ama ben seni çok özledim...",
+      "sana senoşum Demeyi özledim...",
+      "odun olduğum için yazılım öğrendim sana bunu yapmak içinnn...",
+      "artık sadece sen ve ben varız asla düşündüğün şeyler olmicak senoşum yalan yok dolan yok sadece biz...",
+      "senİ çok seviyORUrum senoşummm...",
+      "Bak vallahi son şansın..."
+    ];
+
+    yesBtn.addEventListener("click", () => {
+      if (yesBtn.id === "fullYes") {
+        // Son evet basışta doğrudan YouTube sayfasına yönlendir
+        window.location.href = "https://www.youtube.com/watch?v=QrgKLYTJ2lg&ab_channel=Storm";
+      } else {
+        message.textContent = "Yaaa 💞 Hemen barışalım o zaman!";
+        playMagic();
+      }
+    });
+
+    noBtn.addEventListener("click", () => {
+      if (noClickCount < noMessages.length) {
+        message.textContent = noMessages[noClickCount];
+        noClickCount++;
+
+        let yesSize = 1.5 + noClickCount * 0.4;
+        let noSize = Math.max(1.5 - noClickCount * 0.2, 0.5);
+
+        yesBtn.style.fontSize = `${yesSize}rem`;
+        noBtn.style.fontSize = `${noSize}rem`;
+      }
+
+      if (noClickCount === noMessages.length) {
+        noBtn.style.display = "none";
+        yesBtn.id = "fullYes";
+        yesBtn.textContent = "sadece SEN VE BEN";
+      }
+    });
+
+    function playMagic() {
+      audio.play();
+      launchConfetti();
+    }
+
+    function launchConfetti() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const confetti = [];
+      const colors = ["#ffcc00", "#c8102e"];
+
+      for (let i = 0; i < 600; i++) {
+        confetti.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 10 + 8,
+          d: Math.random() * 10 + 5,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          tilt: Math.random() * 10 - 10
+        });
+      }
+
+      function drawConfetti() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        confetti.forEach(c => {
+          ctx.beginPath();
+          ctx.lineWidth = c.r;
+          ctx.strokeStyle = c.color;
+          ctx.moveTo(c.x + c.tilt, c.y);
+          ctx.lineTo(c.x + c.tilt + c.r / 2, c.y + c.r);
+          ctx.stroke();
+        });
+        updateConfetti();
+      }
+
+      function updateConfetti() {
+        confetti.forEach(c => {
+          c.y += Math.cos(c.d) + 2;
+          c.x += Math.sin(c.d);
+          if (c.y > canvas.height) {
+            c.y = -10;
+            c.x = Math.random() * canvas.width;
+          }
+        });
+      }
+
+      function animate() {
+        drawConfetti();
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    }
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
